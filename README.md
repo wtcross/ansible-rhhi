@@ -6,5 +6,8 @@ The Ansible Playbooks in this project are designed to be run via AWX in order to
 
 This project follows the [RHHI installation docs](https://access.redhat.com/documentation/en-us/red_hat_hyperconverged_infrastructure/1.0/html/deploying_red_hat_hyperconverged_infrastructure/). A few conventions are enforced in this project, like naming of RHHI hosts in inventory, so that the automation itself can be simpler. When first seeing this keep in mind that it does not affect the underlaying architecture of a RHHI deployment, just how that architecture is expressed in Ansible inventory.
 
+An ISO-based install is taken using the following ISO:
+`RHVH-4.1-20170914.1-RHVH-x86_64-dvd1.iso`
+
 ## License
 [GNU General Public License v3.0](LICENSE)
