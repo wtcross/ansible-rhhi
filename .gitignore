@@ -4,3 +4,4 @@ lab*
 bin
 vars/
 inventory/
+.DS_Store
