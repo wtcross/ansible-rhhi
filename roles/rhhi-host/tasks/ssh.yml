@@ -1,0 +1,39 @@
+---
+- name: ensure sshd is started and enabled on system startup
+  service:
+    name: sshd
+    enabled: yes
+    state: started
+
+- name: get the public key for the rhhi ssh private key
+  command: ssh-keygen -y -f {{ rhhi_ssh_private_key_path }}
+  register: rhhi_ssh_public_key_gen
+  delegate_to: localhost
+  changed_when: False
+
+- name: ensure the rhhi ssh public key is authorized
+  authorized_key:
+    user: "{{ ansible_user }}"
+    key: "{{ rhhi_ssh_public_key_gen.stdout }}"
+    exclusive: yes
+    state: present
+
+- name: ensure the rhhi ssh private key is in place on the rhhi node
+  copy:
+    src: "{{ rhhi_ssh_private_key_path }}"
+    dest: .ssh/id_rsa
+    owner: root
+    group: root
+    mode: 0600
+  delegate_to: rhhi01
+  run_once: yes
+
+- name: ensure sshd config is correct
+  template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart sshd

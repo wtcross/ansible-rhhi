@@ -1,0 +1,39 @@
+---
+- set_fact:
+    is_satellite: "{{ rhsm_server_hostname != 'subscription.rhn.redhat.com' }}"
+
+- name: set up satellite ca certificate
+  block:
+    - name: grab the satellite ca certificate
+      get_url:
+        url: http://{{ rhsm_server_hostname }}/pub/katello-ca-consumer-{{ rhsm_server_hostname }}-1.0-1.noarch.rpm
+        dest: /tmp/katello-ca-consumer-{{ rhsm_server_hostname }}-1.0-1.noarch.rpm
+
+    - name: install the satellite ca certificate
+      yum:
+        name: /tmp/katello-ca-consumer-{{ rhsm_server_hostname }}-1.0-1.noarch.rpm
+        state: present
+  when: is_satellite
+
+- name: register with username and password
+  redhat_subscription:
+    rhsm_baseurl: "{{ rhsm_base_url }}"
+    server_hostname: "{{ rhsm_server_hostname }}"
+    server_insecure: "{{ rhsm_server_insecure | bool }}"
+    pool_ids: "{{ base_pool_ids }}"
+    username: "{{ rhsm_username }}"
+    password: "{{ rhsm_password }}"
+    state: present
+  when:
+    - rhsm_username is defined
+    - rhsm_password is defined
+
+- name: register with activation key
+  redhat_subscription:
+    rhsm_baseurl: "{{ rhsm_base_url }}"
+    server_hostname: "{{ rhsm_server_hostname }}"
+    server_insecure: "{{ rhsm_server_insecure | bool }}"
+    org_id: "{{ rhsm_org_id }}"
+    activationkey: "{{ rhsm_activationkey }}"
+    state: present
+  when: rhsm_activationkey is defined

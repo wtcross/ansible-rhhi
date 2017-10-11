@@ -1,0 +1,16 @@
+---
+- name: run all tasks related to subscription management
+  include_tasks: rhsm.yml
+
+- name: run all tasks related to configuring ssh
+  include_tasks: ssh.yml
+
+- name: ensure rhvh-4 repos are enabled
+  command: subscription-manager repos --enable=rhel-7-server-rhvh-4-rpms
+
+- name: verify that cockpit responds to a ping
+  uri:
+    url: https://{{ ansible_host }}:9090/ping
+    method: GET
+    status_code: 200
+    validate_certs: no

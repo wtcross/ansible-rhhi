@@ -1,0 +1,49 @@
+---
+- name: check that inventory_hostname is named correctly
+  fail:
+    msg: reference documentation for inventory setup instructions
+  when: not (inventory_hostname | match('rhhi0[1-9]'))
+
+- name: check that the inventory is set up correctly
+  fail:
+    msg: reference documentation for naming conventions of hosts
+  when: (groups['rhhi-hosts'] | length) not in [3, 6, 9]
+  run_once: yes
+
+- name: check that rhsm_username and rhsm_password are both set if one is
+  fail:
+    msg: must set both rhsm_username and rhsm_password at the same time
+  when: >
+    (rhsm_username is defined and rhsm_password is undefined) or
+    (rhsm_username is undefined and rhsm_password is defined)
+  run_once: yes
+
+- name: check that rhsm_org_id and rhsm_activationkey are both set if one is
+  fail:
+    msg: must set both rhsm_org_id and rhsm_activationkey at the same time
+  when: >
+    (rhsm_org_id is defined and rhsm_activationkey is undefined) or
+    (rhsm_org_id is undefined and rhsm_activationkey is defined)
+  run_once: yes
+
+- name: check that either (rhsm_username + rhsm_password) or (rhsm_org_id + rhsm_activationkey) are used
+  fail:
+    msg: must use either (rhsm_username + rhsm_password) or (rhsm_org_id + rhsm_activationkey)
+  when: >
+    (rhsm_username is defined and rhsm_password is defined and rhsm_org_id is defined) or
+    (rhsm_username is defined and rhsm_password is defined and rhsm_activationkey is defined) or
+    (rhsm_org_id is defined and rhsm_activationkey is defined and rhsm_username is defined) or
+    (rhsm_org_id is defined and rhsm_activationkey is defined and rhsm_password is defined)
+  run_once: yes
+
+- name: check that at least one pool id was set
+  fail:
+    msg: must set one or more pool ids for installation of rhhi
+  when: not base_pool_ids
+  run_once: yes
+
+- name: check that the rhhi_ssh_private_key_path variable is set
+  fail:
+    msg: must set the rhhi_ssh_private_key_path to the path to the rhhi ssh private key
+  when: rhhi_ssh_private_key_path is undefined
+  run_once: yes
