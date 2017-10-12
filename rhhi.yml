@@ -16,3 +16,19 @@
         ansible_ssh_private_key_file: "{{ rhhi_ssh_private_key_path }}"
   roles:
     - rhhi-host
+
+
+- name: configure gluster on install target rhhi host
+  hosts: rhhi-hosts:&rhhi-install-target
+  gather_facts: yes
+  remote_user: root
+  pre_tasks:
+    - name: ensure the rhhi ssh private key is in place
+      copy:
+        src: "{{ rhhi_ssh_private_key_path }}"
+        dest: .ssh/id_rsa
+        owner: root
+        group: root
+        mode: 0600
+  roles:
+    - gluster-config
