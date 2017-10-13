@@ -27,3 +27,13 @@
     mode: 0644
   notify:
     - restart sshd
+
+- name: ensure the ssh client doesn't perform host key checking for other all rhhi nodes
+  template:
+    src: ssh_config.j2
+    dest: /etc/ssh/ssh_config
+    owner: root
+    group: root
+    mode: 0644
+  vars:
+    rhhi_host_ip_list: "{{ groups['rhhi-hosts'] | map('extract', hostvars) | list | map(attribute='ansible_host') | list }}"

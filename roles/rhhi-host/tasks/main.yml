@@ -1,9 +1,11 @@
 ---
 - name: run all tasks related to subscription management
   include_tasks: rhsm.yml
+  tags: ['rhsm']
 
 - name: run all tasks related to configuring ssh
   include_tasks: ssh.yml
+  tags: ['ssh']
 
 - name: ensure rhvh-4 repos are enabled
   command: subscription-manager repos --enable=rhel-7-server-rhvh-4-rpms

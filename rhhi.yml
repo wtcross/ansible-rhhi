@@ -22,13 +22,6 @@
   hosts: rhhi-hosts:&rhhi-install-target
   gather_facts: yes
   remote_user: root
-  pre_tasks:
-    - name: ensure the rhhi ssh private key is in place
-      copy:
-        src: "{{ rhhi_ssh_private_key_path }}"
-        dest: .ssh/id_rsa
-        owner: root
-        group: root
-        mode: 0600
   roles:
+    - rhhi-install-target
     - gluster-config

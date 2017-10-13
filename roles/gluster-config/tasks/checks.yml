@@ -1,4 +1,9 @@
 ---
+- name: check that the target machine is correct
+  fail:
+    msg: host '{{ ansible_host }}' is not in the rhhi-install-target inventory group
+  when: inventory_hostname not in groups['rhhi-install-target']
+
 - name: check that the gluster_raid_type (raid type) is valid
   fail:
     msg: gluster_raid_type invalid

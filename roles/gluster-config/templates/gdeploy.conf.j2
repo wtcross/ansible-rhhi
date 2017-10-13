@@ -51,54 +51,43 @@ ignore_vg_errors=no
 
 {% endfor %}
 
-{# how can i loop through the logical volumes? #}
-{# need to understand how different block, volume, and device numbers affect this #}
 [lv1]
 action=create
-poolname=gluster_thinpool_{{ brick_data_device_name }}
+poolname=gluster_thinpool_sdb
 ignore_lv_errors=no
-vgname=gluster_vg_{{ brick_data_device_name }}
-lvtype={{ brick_data_lv_type }}pool
-size={{ brick_data_size }}GB
+vgname=gluster_vg_sdb
+lvtype=thinpool
+size=21GB
 poolmetadatasize=1GB
 
 [lv2]
 action=create
-poolname=gluster_thinpool_{{ brick_vmstore_device_name }}
+lvname=gluster_lv_engine
 ignore_lv_errors=no
-vgname=gluster_vg_{{ brick_vmstore_device_name }}
-lvtype={{ brick_vmstore_lv_type }}pool
-size={{ brick_vmstore_size }}GB
-poolmetadatasize=1GB
+vgname=gluster_vg_sdb
+mount=/gluster_bricks/engine
+size=100GB
+lvtype=thick
 
 [lv3]
 action=create
-lvname=gluster_lv_engine
+lvname=gluster_lv_data
 ignore_lv_errors=no
-vgname=gluster_vg_{{ brick_engine_device_name }}
-mount={{ brick_engine_mount_point }}
-size={{ brick_engine_size }}GB
-lvtype={{ brick_engine_lv_type }}
+vgname=gluster_vg_sdb
+mount=/gluster_bricks/data
+lvtype=thinlv
+poolname=gluster_thinpool_sdb
+virtualsize=10GB
 
 [lv4]
 action=create
-lvname=gluster_lv_data
-ignore_lv_errors=no
-vgname=gluster_vg_{{ brick_data_device_name }}
-mount={{ brick_data_mount_point }}
-lvtype={{ brick_data_lv_type }}lv
-poolname=gluster_thinpool_{{ brick_data_device_name }}
-virtualsize={{ brick_data_size }}GB
-
-[lv5]
-action=create
 lvname=gluster_lv_vmstore
 ignore_lv_errors=no
-vgname=gluster_vg_{{ brick_vmstore_device_name }}
-mount={{ brick_vmstore_mount_point }}
-lvtype={{ brick_vmstore_lv_type }}lv
-poolname=gluster_thinpool_{{ brick_vmstore_device_name }}
-virtualsize={{ brick_vmstore_size }}GB
+vgname=gluster_vg_sdb
+mount=/gluster_bricks/vmstore
+lvtype=thinlv
+poolname=gluster_thinpool_sdb
+virtualsize=10GB
 
 [selinux]
 yes
@@ -129,7 +118,7 @@ replica=yes
 replica_count=3
 key=group,storage.owner-uid,storage.owner-gid,network.ping-timeout,performance.strict-o-direct,network.remote-dio,cluster.granular-entry-heal,features.shard-block-size
 value=virt,36,36,30,on,off,enable,64MB
-brick_dirs={{ rhhi_host_list|map(attribute='ansible_host')|map('regex_replace', '^(.*)$', '\\1:/gluster_bricks/engine/engine')|join(',') }}
+brick_dirs=10.0.102.165:/gluster_bricks/engine/engine,10.0.102.166:/gluster_bricks/engine/engine,10.0.102.167:/gluster_bricks/engine/engine
 ignore_volume_errors=no
 
 [volume2]
@@ -140,7 +129,7 @@ replica=yes
 replica_count=3
 key=group,storage.owner-uid,storage.owner-gid,network.ping-timeout,performance.strict-o-direct,network.remote-dio,cluster.granular-entry-heal,features.shard-block-size
 value=virt,36,36,30,on,off,enable,64MB
-brick_dirs={{ rhhi_host_list|map(attribute='ansible_host')|map('regex_replace', '^(.*)$', '\\1:/gluster_bricks/data/data')|join(',') }}
+brick_dirs=10.0.102.165:/gluster_bricks/data/data,10.0.102.166:/gluster_bricks/data/data,10.0.102.167:/gluster_bricks/data/data
 ignore_volume_errors=no
 
 [volume3]
@@ -151,5 +140,5 @@ replica=yes
 replica_count=3
 key=group,storage.owner-uid,storage.owner-gid,network.ping-timeout,performance.strict-o-direct,network.remote-dio,cluster.granular-entry-heal,features.shard-block-size
 value=virt,36,36,30,on,off,enable,64MB
-brick_dirs={{ rhhi_host_list|map(attribute='ansible_host')|map('regex_replace', '^(.*)$', '\\1:/gluster_bricks/vmstore/vmstore')|join(',') }}
+brick_dirs=10.0.102.165:/gluster_bricks/vmstore/vmstore,10.0.102.166:/gluster_bricks/vmstore/vmstore,10.0.102.167:/gluster_bricks/vmstore/vmstore
 ignore_volume_errors=no

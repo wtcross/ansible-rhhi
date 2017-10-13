@@ -13,16 +13,16 @@ volume_vmstore_arbiter: no
 volume_vmstore_brick_dirs: /gluster_bricks/vmstore/vmstore
 
 brick_engine_device_name: sdb
-brick_engine_size: 10
+brick_engine_size: 100
 brick_engine_lv_type: thick
 brick_engine_mount_point: /gluster_bricks/engine
 
 brick_data_device_name: sdb
-brick_data_size: 15
+brick_data_size: 10
 brick_data_lv_type: thin
 brick_data_mount_point: /gluster_bricks/data
 
-brick_vmstore_device_name: sdc
-brick_vmstore_size: 25
+brick_vmstore_device_name: sdb
+brick_vmstore_size: 10
 brick_vmstore_lv_type: thin
 brick_vmstore_mount_point: /gluster_bricks/vmstore
