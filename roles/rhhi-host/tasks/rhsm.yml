@@ -37,3 +37,6 @@
     activationkey: "{{ rhsm_activationkey }}"
     state: present
   when: rhsm_activationkey is defined
+
+- name: ensure rhvh-4 repos are enabled
+  command: subscription-manager repos --enable=rhel-7-server-rhvh-4-rpms

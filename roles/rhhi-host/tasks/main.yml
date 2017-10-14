@@ -10,9 +10,6 @@
   include_tasks: ssh.yml
   tags: ['ssh']
 
-- name: ensure rhvh-4 repos are enabled
-  command: subscription-manager repos --enable=rhel-7-server-rhvh-4-rpms
-
 - name: verify that cockpit responds to a ping
   uri:
     url: https://{{ ansible_host }}:9090/ping
