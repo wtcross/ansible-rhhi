@@ -1,4 +1,7 @@
 ---
+- name: perform safety checks
+  include_tasks: checks.yml
+
 - name: run all tasks related to subscription management
   include_tasks: rhsm.yml
   tags: ['rhsm']

@@ -1,5 +1,6 @@
 ---
-- include_tasks: checks.yml
+- name: perform safety checks
+  include_tasks: checks.yml
 
 - set_fact:
     rhhi_host_list: "{{ groups['rhhi-hosts'] | map('extract', hostvars) | list }}"
