@@ -1,12 +1,4 @@
 ---
-- name: perform pre-flight checks
-  hosts: rhhi-hosts
-  connection: local
-  gather_facts: no
-  pre_tasks:
-    - include_tasks: tasks/pre-flight-checks.yml
-
-
 - name: ensure all physical rhhi nodes have the correct baseline configuration
   hosts: rhhi-hosts
   gather_facts: yes
