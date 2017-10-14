@@ -1,4 +1,8 @@
 ---
+- name: perform pre checks
+  include_tasks: checks/pre.yml
+  tags: ['checks']
+
 - name: ensure the rhhi ssh private key is in place
   copy:
     src: "{{ rhhi_ssh_private_key_path }}"

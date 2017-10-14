@@ -1,6 +1,6 @@
 ---
-- name: perform safety checks
-  include_tasks: checks.yml
+- name: perform pre checks
+  include_tasks: checks/pre.yml
   tags: ['checks']
 
 - name: run all tasks related to subscription management
@@ -11,9 +11,6 @@
   include_tasks: ssh.yml
   tags: ['ssh']
 
-- name: verify that cockpit responds to a ping
-  uri:
-    url: https://{{ ansible_host }}:9090/ping
-    method: GET
-    status_code: 200
-    validate_certs: no
+- name: perform post checks
+  include_tasks: checks/post.yml
+  tags: ['checks']

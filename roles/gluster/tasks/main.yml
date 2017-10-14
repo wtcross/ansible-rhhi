@@ -1,33 +1,11 @@
 ---
-- name: perform safety checks
-  include_tasks: checks.yml
+- name: perform pre checks
+  include_tasks: checks/pre.yml
   tags: ['checks']
 
-- set_fact:
-    rhhi_host_list: "{{ groups['rhhi-hosts'] | map('extract', hostvars) | list }}"
-    unique_brick_device_names: "{{ [brick_engine_device_name, brick_data_device_name, brick_vmstore_device_name] | unique }}"
+- name: install gluster
+  include_tasks: install.yml
 
-- name: create gdeploy config file
-  template:
-    src: gdeploy.conf.j2
-    dest: /tmp/gdeploy.conf
-
-- name: check that the gluster command is on the system
-  command: which gluster
-  register: check_gluster
-  changed_when: no
-  failed_when: no
-
-- set_fact:
-    gluster_installed: check_gluster.rc == 0
-
-- name: install gluster if it is not present
-  command: gdeploy -c /tmp/gdeploy.conf
-  register: gdeploy_run
-  when: not gluster_installed
-
-- name: verify state of gluster setup by probing all peers
-  command: gluster peer probe {{ item }}
-  changed_when: no
-  when: gluster_installed or (gdeploy_run | succeeded)
-  with_items: "{{ rhhi_host_list | rejectattr('ansible_host', 'equalto', ansible_host) | map(attribute='ansible_host') | list }}"
+- name: perform post checks
+  include_tasks: checks/post.yml
+  tags: ['checks']

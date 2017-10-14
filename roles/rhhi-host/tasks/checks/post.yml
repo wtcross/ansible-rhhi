@@ -1,0 +1,7 @@
+---
+- name: verify that cockpit responds to a ping
+  uri:
+    url: https://{{ ansible_host }}:9090/ping
+    method: GET
+    status_code: 200
+    validate_certs: no

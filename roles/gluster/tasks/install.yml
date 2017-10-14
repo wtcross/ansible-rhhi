@@ -1,0 +1,23 @@
+---
+- set_fact:
+    rhhi_host_list: "{{ groups['rhhi-hosts'] | map('extract', hostvars) | list }}"
+    unique_brick_device_names: "{{ [brick_engine_device_name, brick_data_device_name, brick_vmstore_device_name] | unique }}"
+
+- name: create gdeploy config file
+  template:
+    src: gdeploy.conf.j2
+    dest: /tmp/gdeploy.conf
+
+- name: check that the gluster command is on the system
+  command: which gluster
+  register: check_gluster
+  changed_when: no
+  failed_when: no
+
+- set_fact:
+    gluster_installed: check_gluster.rc == 0
+
+- name: install gluster if it is not present
+  command: gdeploy -c /tmp/gdeploy.conf
+  register: gdeploy_run
+  when: not gluster_installed
