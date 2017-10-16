@@ -1,0 +1,14 @@
+---
+- name: verify node status
+  block:
+    - shell: nodectl check | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g"
+      register: nodectl_check
+
+    - fail:
+        msg: |
+          system not in an OK state\:
+          {{ nodectl_check.stdout }}
+      when: nodectl_check.stdout != expected_state
+      vars:
+        expected_state: "Status: OK\nBootloader ... OK\n  Layer boot entries ... OK\n  Valid boot entries ... OK\nMount points ... OK\n  Separate /var ... OK\n  Discard is used ... OK\nBasic storage ... OK\n  Initialized VG ... OK\n  Initialized Thin Pool ... OK\n  Initialized LVs ... OK\nThin storage ... OK\n  Checking available space in thinpool ... OK\n  Checking thinpool auto-extend ... OK\nvdsmd ... OK"
+  run_once: yes

@@ -5,3 +5,6 @@
     method: GET
     status_code: 200
     validate_certs: no
+
+- name: perform common checks
+  include_tasks: common.yml

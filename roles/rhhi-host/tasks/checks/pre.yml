@@ -54,3 +54,6 @@
     msg: must set the rhhi_ssh_private_key_path to the path to the rhhi ssh private key
   when: rhhi_ssh_private_key_path is undefined
   run_once: yes
+
+- name: perform common checks
+  include_tasks: common.yml

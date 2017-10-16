@@ -3,33 +3,40 @@
   fail:
     msg: host '{{ ansible_host }}' is not in the rhhi-install-target inventory group
   when: inventory_hostname not in groups['rhhi-install-target']
+  run_once: yes
 
 - name: check that the gluster_raid_type (raid type) is valid
   fail:
     msg: gluster_raid_type invalid
   when: gluster_raid_type not in ['jbod', 'raid5', 'raid6']
+  run_once: yes
 
 - name: check that the gluster_raid_stripe_size is valid
   fail:
     msg: gluster_raid_stripe_size invalid
   when: gluster_raid_stripe_size <= 0
+  run_once: yes
 
 - name: check that the gluster_raid_data_disk_count is valid
   fail:
     msg: gluster_raid_data_disk_count invalid
   when: gluster_raid_data_disk_count <= 0
+  run_once: yes
 
 - name: check that brick_engine_lv_type is valid (thin/thick)
   fail:
     msg: brick_engine_lv_type invalid
   when: brick_engine_lv_type not in ['thin', 'thick']
+  run_once: yes
 
 - name: check that brick_data_lv_type is valid (thin/thick)
   fail:
     msg: brick_data_lv_type invalid
   when: brick_data_lv_type not in ['thin', 'thick']
+  run_once: yes
 
 - name: check that brick_vmstore_lv_type is valid (thin/thick)
   fail:
     msg: brick_vmstore_lv_type invalid
   when: brick_vmstore_lv_type not in ['thin', 'thick']
+  run_once: yes
