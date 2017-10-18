@@ -17,7 +17,19 @@
 - set_fact:
     gluster_installed: check_gluster.rc == 0
 
-- name: install gluster if it is not present
+- name: check the number of peers (naive check)
+  command: gluster peer status
+  register: peer_status
+  changed_when: no
+  failed_when: no
+
+- set_fact:
+    peer_count: "{{ (peer_status.stdout_lines[0] | regex_findall('Number of Peers: (\\d+)'))[0] }}"
+
+- set_fact:
+    gluster_configured: "{{ (peer_count | int) > 0 }}"
+
+- name: configure gluster if needed
   command: gdeploy -c /tmp/gdeploy.conf
   register: gdeploy_run
-  when: not gluster_installed
+  when: not gluster_configured

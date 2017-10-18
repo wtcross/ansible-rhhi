@@ -1,16 +1,35 @@
 ---
 - name: ensure all physical rhhi nodes have the correct baseline configuration
   hosts: rhhi-hosts
-  gather_facts: yes
+  gather_facts: no
   remote_user: root
   pre_tasks:
     - set_fact:
         ansible_ssh_private_key_file: "{{ rhhi_ssh_private_key_path }}"
+
+    - name: wait for all rhhi nodes to be online
+      block:
+        - name: wait for ssh to be listening for connections
+          wait_for:
+            connect_timeout: 10
+            delay: 10
+            host: "{{ ansible_host }}"
+            port: 22
+            timeout: 1800
+      rescue:
+        - name: try again
+          wait_for:
+            connect_timeout: 10
+            delay: 10
+            host: "{{ ansible_host }}"
+            port: 22
+            timeout: 1800
+      delegate_to: localhost
   roles:
-    - rhhi-host
+    - rhvh
 
 
-- name: install gluster
+- name: ensure rhhi components are deployed and configured correctly
   hosts: rhhi-hosts:&rhhi-install-target
   gather_facts: yes
   remote_user: root

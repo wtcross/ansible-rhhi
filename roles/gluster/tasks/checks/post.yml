@@ -2,5 +2,5 @@
 - name: verify state of gluster setup by probing all peers
   command: gluster peer probe {{ item }}
   changed_when: no
-  when: gluster_installed or (gdeploy_run | succeeded)
+  when: gluster_configured or (gdeploy_run | succeeded)
   with_items: "{{ rhhi_host_list | rejectattr('ansible_host', 'equalto', ansible_host) | map(attribute='ansible_host') | list }}"

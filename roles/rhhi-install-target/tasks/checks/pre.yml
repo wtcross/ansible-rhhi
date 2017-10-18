@@ -14,7 +14,7 @@
         lookup_domainname: "{{ lookup_match[0][1] }}"
 
     - name: perform dns lookup by hostname
-      command: host {{ lookup_hostname }}
+      command: host {{ lookup_hostname }}.{{ domain }}
       register: lookup_by_hostname
       changed_when: no
 
