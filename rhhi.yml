@@ -10,10 +10,11 @@
     - rhhi-host
 
 
-- name: configure gluster on install target rhhi host
+- name: install gluster
   hosts: rhhi-hosts:&rhhi-install-target
   gather_facts: yes
   remote_user: root
   roles:
     - rhhi-install-target
     - gluster
+    - hosted-engine

@@ -1,7 +1,20 @@
 ---
-- name: check that the target machine is correct
+- name: check that each node has required variables set
   fail:
-    msg: host '{{ ansible_host }}' is not in the rhhi-install-target inventory group
+    msg: missing required variable '{{ item }}'
+  when: item not in hostvars[inventory_hostname]
+  with_items:
+    - pod_location
+    - domain
+    - dns
+    - hostname
+    - ip_prefix_length
+    - vm_ip
+    - glu_ip
+
+- name: check that there is a target machine
+  fail:
+    msg: host '{{ inventory_hostname }}' is not in the rhhi-install-target inventory group
   when: inventory_hostname not in groups['rhhi-install-target']
   run_once: yes
 

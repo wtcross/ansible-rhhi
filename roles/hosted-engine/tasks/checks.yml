@@ -1,0 +1,15 @@
+---
+- name: check that each node has required variables set
+  fail:
+    msg: missing required variable '{{ item }}'
+  when: item not in hostvars[inventory_hostname]
+  with_items:
+    - he_admin_password
+    - he_cloudinit_root_password
+    - vm_if
+    - he_ip
+    - he_fqdn
+    - he_memsize_mb
+    - domain
+    - dns
+    - gateway

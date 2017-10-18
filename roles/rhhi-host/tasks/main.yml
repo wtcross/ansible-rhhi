@@ -3,6 +3,9 @@
   include_tasks: checks/pre.yml
   tags: ['checks']
 
+- name: ensure the node has the correct hostname and domain
+  command: hostnamectl set-hostname {{ hostname }}.{{ domain }}
+
 - name: run all tasks related to subscription management
   include_tasks: rhsm.yml
   tags: ['rhsm']

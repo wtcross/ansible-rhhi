@@ -1,0 +1,35 @@
+---
+- set_fact:
+    rhhi_host_list: "{{ groups['rhhi-hosts'] | map('extract', hostvars) | list }}"
+
+- name: ensure the hosted engine rpm is installed
+  yum:
+    name: rhvm-appliance
+    state: present
+
+- name: get the public key for the rhhi ssh private key
+  command: ssh-keygen -y -f {{ rhhi_ssh_private_key_path }}
+  register: rhhi_ssh_public_key_gen
+  delegate_to: localhost
+  changed_when: False
+
+- name: create hosted engine answer file
+  template:
+    src: he-answers.conf.j2
+    dest: /tmp/he-answers.conf
+  vars:
+    rhhi_ssh_public_key: "{{ rhhi_ssh_public_key_gen.stdout }}"
+
+- name: check status of the hosted engine
+  command: hosted-engine --vm-status
+  register: check_hosted_engine
+  changed_when: no
+  failed_when: no
+
+- set_fact:
+    need_hosted_engine_deploy: "{{ check_hosted_engine.stdout == 'You must run deploy first' }}"
+
+- name: install the hosted engine if it is not present
+  shell: hosted-engine --deploy --config-append=/tmp/he-answers.conf < /dev/null
+  register: hosted_engine_install
+  when: need_hosted_engine_deploy

@@ -1,0 +1,7 @@
+---
+- name: perform safety checks
+  include_tasks: checks.yml
+  tags: ['checks']
+
+- name: install the hosted engine
+  include_tasks: install.yml
