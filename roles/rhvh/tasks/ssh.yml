@@ -36,4 +36,4 @@
     group: root
     mode: 0644
   vars:
-    rhhi_host_ip_list: "{{ groups['rhhi-hosts'] | map('extract', hostvars) | list | map(attribute='ansible_host') | list }}"
+    gluster_host_ip_list: "{{ groups['rhhi-hosts'] | map('extract', hostvars) | list | map(attribute='glu_ip') | list }}"

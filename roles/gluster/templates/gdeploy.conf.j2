@@ -7,7 +7,7 @@
 [script1]
 action=execute
 ignore_script_errors=no
-file=/usr/share/ansible/gdeploy/scripts/grafton-sanity-check.sh -d {{ unique_brick_device_names | join(',') }} -h {{ rhhi_host_list | join(',', attribute='glu_ip') }}
+file=/usr/share/ansible/gdeploy/scripts/grafton-sanity-check.sh -d {{ brick_device_name }} -h {{ rhhi_host_list | join(',', attribute='glu_ip') }}
 
 [disktype]
 {{ gluster_raid_type }}
@@ -35,36 +35,31 @@ action=execute
 file=/usr/share/ansible/gdeploy/scripts/disable-multipath.sh
 ignore_script_errors=no
 
-{% for device_name in unique_brick_device_names %}
-[pv{{ loop.index }}]
+[pv1]
 action=create
-devices={{ device_name }}
+devices={{ brick_device_name }}
 ignore_pv_errors=no
 
-{% endfor %}
-{% for device_name in unique_brick_device_names %}
-[vg{{ loop.index }}]
+[vg1]
 action=create
-vgname=gluster_vg_{{ device_name }}
-pvname={{ device_name }}
+vgname=gluster_vg_{{ brick_device_name }}
+pvname={{ brick_device_name }}
 ignore_vg_errors=no
-
-{% endfor %}
 
 [lv1]
 action=create
-poolname=gluster_thinpool_sdb
+poolname=gluster_thinpool_{{ brick_device_name }}
 ignore_lv_errors=no
-vgname=gluster_vg_sdb
+vgname=gluster_vg_{{ brick_device_name }}
 lvtype=thinpool
-size=21GB
-poolmetadatasize=1GB
+size=30GB
+poolmetadatasize=10GB
 
 [lv2]
 action=create
 lvname=gluster_lv_engine
 ignore_lv_errors=no
-vgname=gluster_vg_sdb
+vgname=gluster_vg_{{ brick_device_name }}
 mount=/gluster_bricks/engine
 size=100GB
 lvtype=thick
@@ -73,21 +68,21 @@ lvtype=thick
 action=create
 lvname=gluster_lv_data
 ignore_lv_errors=no
-vgname=gluster_vg_sdb
+vgname=gluster_vg_{{ brick_device_name }}
 mount=/gluster_bricks/data
 lvtype=thinlv
-poolname=gluster_thinpool_sdb
-virtualsize=10GB
+poolname=gluster_thinpool_{{ brick_device_name }}
+virtualsize=100GB
 
 [lv4]
 action=create
 lvname=gluster_lv_vmstore
 ignore_lv_errors=no
-vgname=gluster_vg_sdb
+vgname=gluster_vg_{{ brick_device_name }}
 mount=/gluster_bricks/vmstore
 lvtype=thinlv
-poolname=gluster_thinpool_sdb
-virtualsize=10GB
+poolname=gluster_thinpool_{{ brick_device_name }}
+virtualsize=200GB
 
 [selinux]
 yes

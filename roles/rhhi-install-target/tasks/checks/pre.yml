@@ -7,7 +7,10 @@
       changed_when: no
 
     - set_fact:
-        lookup_match: "{{ lookup_by_ip.stdout | regex_findall('^.*domain\\sname\\spointer\\s([a-zA-Z\\-]+)\\.([a-zA-Z\\-]+)\\.$') }}"
+        lookup_regex: .*in-addr.arpa domain name pointer ({{ test_hostname | regex_escape }})\.({{ domain | regex_escape }})\.
+
+    - set_fact:
+        lookup_match: "{{ lookup_by_ip.stdout | regex_findall(lookup_regex) }}"
 
     - set_fact:
         lookup_hostname: "{{ lookup_match[0][0] }}"
@@ -26,5 +29,7 @@
     - fail:
         msg: forward and reverse dns are required to be functioning correctly for this system
   vars:
-    test_ip: "{{ (groups['rhhi-hosts'] | reject('equalto', inventory_hostname) | map('extract', hostvars) | first)['ansible_host'] }}"
+    test_host: "{{ groups['rhhi-hosts'] | reject('equalto', inventory_hostname) | map('extract', hostvars) | first }}"
+    test_ip: "{{ test_host['ansible_host'] }}"
+    test_hostname: "{{ test_host['inventory_hostname'] }}"
   run_once: yes

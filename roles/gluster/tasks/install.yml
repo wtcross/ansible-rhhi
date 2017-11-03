@@ -1,7 +1,6 @@
 ---
 - set_fact:
     rhhi_host_list: "{{ groups['rhhi-hosts'] | map('extract', hostvars) | list }}"
-    unique_brick_device_names: "{{ [brick_engine_device_name, brick_data_device_name, brick_vmstore_device_name] | unique }}"
 
 - name: create gdeploy config file
   template:
