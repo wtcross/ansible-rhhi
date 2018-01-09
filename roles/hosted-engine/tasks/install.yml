@@ -30,6 +30,6 @@
     need_hosted_engine_deploy: "{{ check_hosted_engine.stdout == 'You must run deploy first' }}"
 
 - name: install the hosted engine if it is not present
-  shell: hosted-engine --deploy --config-append=/tmp/he-answers.conf < /dev/null
+  shell: hosted-engine --ansible --deploy --config-append=/tmp/he-answers.conf < /dev/null
   register: hosted_engine_install
   when: need_hosted_engine_deploy
